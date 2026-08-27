@@ -1,0 +1,26 @@
+{
+  "name": "agent-engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun run src/index.ts",
+    "start": "bun run src/index.ts",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.14.4",
+    "diff": "^8.0.2",
+    "hono": "^4.6.3",
+    "minisearch": "^7.1.2",
+    "node-pty": "^1.1.0",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/diff": "^8.0.0",
+    "@types/node": "^24.0.0",
+    "@types/ws": "^8.5.10",
+    "typescript": "^5.8.0"
+  }
+}

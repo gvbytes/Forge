@@ -1,0 +1,16 @@
+{
+  "name": "agent-ide",
+  "private": true,
+  "workspaces": [
+    "router",
+    "engine",
+    "web"
+  ],
+  "scripts": {
+    "dev": "bash scripts/dev.sh",
+    "setup": "bun run scripts/setup-keys.ts",
+    "preflight": "bun run scripts/preflight-models.ts",
+    "test": "cd router && bun test && cd ../engine && bun test",
+    "typecheck": "cd router && ./node_modules/.bin/tsc --noEmit && cd ../engine && ./node_modules/.bin/tsc --noEmit && cd ../web && ./node_modules/.bin/tsc --noEmit"
+  }
+}
