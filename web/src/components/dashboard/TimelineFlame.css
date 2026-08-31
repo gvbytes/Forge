@@ -1,0 +1,100 @@
+/* TimelineFlame — horizontal span timeline strip (pure CSS, no libs).
+   Bars are absolutely positioned over a shared time axis, colored by kind. */
+
+.az-tl { display: flex; flex-direction: column; height: 100%; background: var(--az-bg); }
+
+.az-tl-head {
+  flex: none;
+  display: flex; align-items: center; gap: 10px;
+  padding: 6px 12px 4px;
+  font: 600 9.5px/1 var(--az-sans);
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--az-faint);
+}
+
+/* time ruler */
+.az-tl-ruler {
+  position: relative; height: 14px; margin: 0 12px;
+  border-bottom: 1px solid var(--az-border-soft);
+  font: 400 9px/1 var(--az-mono); color: var(--az-faint);
+}
+.az-tl-tick {
+  position: absolute; top: 2px;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+.az-tl-tick::after {
+  content: ""; position: absolute; left: 50%; top: 11px;
+  width: 1px; height: 5px; background: var(--az-border);
+}
+
+/* lanes */
+.az-tl-body {
+  flex: 1; min-height: 0;
+  overflow-x: auto; overflow-y: visible;
+  padding: 6px 0 8px;
+}
+.az-tl-lane {
+  position: relative; height: 16px; margin: 3px 12px;
+}
+.az-tl-bar {
+  position: absolute; top: 1px; height: 13px;
+  min-width: 3px;
+  border-radius: 3px;
+  opacity: .82;
+  cursor: pointer;
+  transition: opacity .1s ease, box-shadow .1s ease;
+}
+.az-tl-bar:hover {
+  opacity: 1;
+  box-shadow: 0 0 0 1px #e6edf388, 0 0 10px -2px currentColor;
+  z-index: 4;
+}
+.az-tl-bar.sel {
+  opacity: 1;
+  box-shadow: 0 0 0 1.5px var(--az-text), 0 0 12px -2px currentColor;
+  z-index: 3;
+}
+.az-tl-bar.running {
+  background-image: linear-gradient(45deg,
+    #ffffff22 25%, transparent 25%, transparent 50%,
+    #ffffff22 50%, #ffffff22 75%, transparent 75%);
+  background-size: 10px 10px;
+  animation: az-tl-stripes .7s linear infinite;
+}
+@keyframes az-tl-stripes { from { background-position: 0 0; } to { background-position: 10px 0; } }
+
+/* kind colors (kept in sync with SpanTree icons) */
+.az-k-agent      { background: var(--az-blue);   color: var(--az-blue); }
+.az-k-llm        { background: var(--az-purple); color: var(--az-purple); }
+.az-k-tool       { background: var(--az-teal);   color: var(--az-teal); }
+.az-k-retrieval  { background: var(--az-warn);   color: var(--az-warn); }
+.az-k-compaction { background: var(--az-pink);   color: var(--az-pink); }
+.az-k-routing    { background: var(--az-orange); color: var(--az-orange); }
+
+/* pure-CSS hover tooltip */
+.az-tl-tip {
+  position: absolute; bottom: calc(100% + 7px); left: 0;
+  transform: translateX(-10%);
+  display: none;
+  pointer-events: none;
+  z-index: 20;
+  font: 400 10.5px/1.5 var(--az-mono);
+  color: var(--az-text);
+  background: #010409f2;
+  border: 1px solid var(--az-border);
+  border-radius: 6px;
+  padding: 5px 9px;
+  white-space: nowrap;
+  box-shadow: 0 8px 22px #000000aa;
+}
+.az-tl-tip b { color: #fff; font-weight: 600; }
+.az-tl-tip .m { color: var(--az-muted); }
+.az-tl-tip .cost { color: var(--az-ok); }
+.az-tl-bar:hover .az-tl-tip,
+.az-tl-bar:focus-visible .az-tl-tip { display: block; }
+
+.az-tl-empty {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  color: var(--az-faint); font-size: 11.5px;
+}
