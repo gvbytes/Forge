@@ -1,0 +1,7 @@
+id: T3-refactor-ts
+title: Extract a shared pagination helper
+instruction: 'The pagination block in src/routes.ts is copy-pasted into all three list handlers. Extract it into a new module src/paginate.ts exporting `paginate<T>(items: readonly T[], page?: number, size?: number): T[]` (defaults page=1, size=20; same windowing semantics as today: start=(page-1)*size, slice to size) and use that helper from all three list handlers in src/routes.ts. The wire behaviour of every route must stay exactly identical: same items, defaults, totals and status codes for every query.'
+tests: npx -y tsx test/api.test.ts
+timeout_s: 900
+solution_patch: solution.patch
+baseline_expectation: fail

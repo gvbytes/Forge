@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mini Calendar</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main class="calendar">
+    <header>
+      <button id="cal-prev" aria-label="Previous month">&larr;</button>
+      <h1 id="cal-label">…</h1>
+      <button id="cal-next" aria-label="Next month">&rarr;</button>
+    </header>
+    <div id="cal-grid" class="cal-grid"></div>
+  </main>
+
+  <script src="js/util/date.js"></script>
+  <script src="js/calendar.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

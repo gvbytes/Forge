@@ -1,0 +1,43 @@
+body {
+  font-family: system-ui, sans-serif;
+  max-width: 34rem;
+  margin: 3rem auto;
+  color: #1c1e21;
+}
+
+h1 {
+  font-size: 1.4rem;
+}
+
+form#new-todo {
+  display: flex;
+  gap: .5rem;
+  margin-bottom: 1rem;
+}
+
+form#new-todo input {
+  flex: 1;
+  padding: .45rem .6rem;
+  border: 1px solid #c9ccd1;
+  border-radius: 6px;
+}
+
+ul.todos {
+  list-style: none;
+  padding: 0;
+}
+
+ul.todos li {
+  padding: .5rem .6rem;
+  border-bottom: 1px solid #eceef0;
+}
+
+ul.todos li.done span {
+  text-decoration: line-through;
+  color: #8a8f98;
+}
+
+li.empty {
+  color: #8a8f98;
+  font-style: italic;
+}

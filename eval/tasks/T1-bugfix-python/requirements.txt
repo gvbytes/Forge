@@ -1,0 +1,4 @@
+# No third-party runtime dependencies — the web layer is standard library.
+#
+# Dev/test tooling (already provided by the evaluation environment):
+#   pytest>=7

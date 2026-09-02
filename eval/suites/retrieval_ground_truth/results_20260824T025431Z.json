@@ -1,0 +1,340 @@
+{
+ "meta": {
+  "dataset": "princeton-nlp/SWE-bench_Lite",
+  "n_selected": 3,
+  "n_ok": 2,
+  "n_timeout": 0,
+  "n_error": 1,
+  "configs": [
+   "full",
+   "bm25_only",
+   "vector_only",
+   "grep"
+  ],
+  "embeddings": true,
+  "instance_timeout_s": 900,
+  "seed": 42,
+  "wall_clock_s": 2220.0,
+  "python": "3.11.2"
+ },
+ "aggregate": {
+  "vector_only": {
+   "n": 2,
+   "recall@5": 0.0,
+   "recall@10": 0.0,
+   "mrr": 0.0,
+   "hit": 0.0,
+   "mean_query_s": 0.349
+  },
+  "grep": {
+   "n": 2,
+   "recall@5": 0.5,
+   "recall@10": 1.0,
+   "mrr": 0.3333,
+   "hit": 1.0,
+   "mean_query_s": 0.037
+  },
+  "full": {
+   "n": 2,
+   "recall@5": 0.0,
+   "recall@10": 0.0,
+   "mrr": 0.0,
+   "hit": 0.0,
+   "mean_query_s": 0.368
+  },
+  "bm25_only": {
+   "n": 2,
+   "recall@5": 0.0,
+   "recall@10": 0.0,
+   "mrr": 0.0,
+   "hit": 0.0,
+   "mean_query_s": 0.021
+  }
+ },
+ "instances": [
+  {
+   "instance_id": "pallets__flask-4992",
+   "repo": "pallets/flask",
+   "base_commit": "4c288bc97ea371817199908d0d9b12de9dae327e",
+   "n_gold": 1,
+   "gold_files": [
+    "src/flask/config.py"
+   ],
+   "index_stats": {
+    "files": 211,
+    "chunks": 1295,
+    "symbols": 834,
+    "edges": 9280
+   },
+   "t_checkout_s": 0.03,
+   "t_index_s": 733.57,
+   "t_query_s": {
+    "full": 0.552,
+    "bm25_only": 0.023,
+    "vector_only": 0.538,
+    "grep": 0.04
+   },
+   "ranked_files": {
+    "full": [
+     "tests/test_config.py",
+     "src/flask/helpers.py",
+     "tests/test_helpers.py",
+     "src/flask/cli.py",
+     "tests/test_cli.py",
+     "examples/javascript/tests/conftest.py"
+    ],
+    "bm25_only": [
+     "tests/test_blueprints.py",
+     "tests/test_helpers.py",
+     "tests/test_templating.py",
+     "src/flask/helpers.py",
+     "tests/test_config.py"
+    ],
+    "vector_only": [
+     "docs/config.rst",
+     "tests/test_config.py",
+     "docs/tutorial/factory.rst",
+     "src/flask/scaffold.py",
+     "src/flask/json/__init__.py"
+    ],
+    "grep": [
+     "docs/config.rst",
+     "docs/extensiondev.rst",
+     "docs/patterns/fileuploads.rst",
+     "docs/quickstart.rst",
+     "src/flask/app.py",
+     "src/flask/config.py",
+     "docs/design.rst",
+     "src/flask/helpers.py",
+     "docs/patterns/celery.rst",
+     "src/flask/scaffold.py",
+     "src/flask/cli.py",
+     "docs/api.rst",
+     "src/flask/sessions.py",
+     "docs/lifecycle.rst",
+     "src/flask/templating.py",
+     "tests/test_json.py",
+     "docs/testing.rst",
+     "src/flask/blueprints.py",
+     "docs/templating.rst",
+     "docs/patterns/appfactories.rst",
+     "src/flask/testing.py",
+     "docs/patterns/sqlalchemy.rst",
+     "src/flask/ctx.py",
+     "src/flask/json/provider.py",
+     "docs/patterns/lazyloading.rst",
+     "docs/server.rst",
+     "src/flask/wrappers.py",
+     "src/flask/debughelpers.py",
+     "docs/extensions.rst",
+     "README.rst",
+     "docs/patterns/urlprocessors.rst",
+     "docs/patterns/appdispatch.rst",
+     "docs/patterns/javascript.rst",
+     "docs/conf.py",
+     "docs/patterns/mongoengine.rst",
+     "docs/patterns/packages.rst",
+     "src/flask/logging.py",
+     "pyproject.toml",
+     "src/flask/__init__.py",
+     "docs/installation.rst",
+     "docs/patterns/viewdecorators.rst",
+     "docs/patterns/streaming.rst",
+     "docs/patterns/deferredcallbacks.rst",
+     "docs/patterns/subclassing.rst",
+     "tests/test_user_error_handler.py",
+     "src/flask/globals.py",
+     "docs/patterns/wtforms.rst",
+     "docs/patterns/flashing.rst",
+     "src/flask/json/tag.py",
+     "docs/patterns/caching.rst",
+     "src/flask/typing.py",
+     "tests/test_json_tag.py",
+     "docs/patterns/sqlite3.rst",
+     "docs/patterns/methodoverrides.rst",
+     "docs/patterns/index.rst",
+     "docs/patterns/favicon.rst",
+     "docs/patterns/singlepageapplications.rst",
+     "src/flask/views.py",
+     "src/flask/signals.py",
+     "docs/Makefile"
+    ]
+   },
+   "metrics": {
+    "full": {
+     "recall@5": 0.0,
+     "recall@10": 0.0,
+     "mrr": 0.0,
+     "hit": 0.0
+    },
+    "bm25_only": {
+     "recall@5": 0.0,
+     "recall@10": 0.0,
+     "mrr": 0.0,
+     "hit": 0.0
+    },
+    "vector_only": {
+     "recall@5": 0.0,
+     "recall@10": 0.0,
+     "mrr": 0.0,
+     "hit": 0.0
+    },
+    "grep": {
+     "recall@5": 0.0,
+     "recall@10": 1.0,
+     "mrr": 0.16666666666666666,
+     "hit": 1.0
+    }
+   },
+   "status": "ok"
+  },
+  {
+   "instance_id": "pallets__flask-4045",
+   "repo": "pallets/flask",
+   "base_commit": "d8c37f43724cd9fb0870f77877b7c4c7e38a19e0",
+   "n_gold": 1,
+   "gold_files": [
+    "src/flask/blueprints.py"
+   ],
+   "index_stats": {
+    "files": 200,
+    "chunks": 1240,
+    "symbols": 778,
+    "edges": 7879
+   },
+   "t_checkout_s": 0.03,
+   "t_index_s": 744.48,
+   "t_query_s": {
+    "full": 0.183,
+    "bm25_only": 0.02,
+    "vector_only": 0.159,
+    "grep": 0.033
+   },
+   "ranked_files": {
+    "full": [
+     "tests/test_async.py",
+     "src/flask/debughelpers.py",
+     "src/flask/helpers.py",
+     "tests/test_user_error_handler.py",
+     "src/flask/wrappers.py",
+     "tests/test_basic.py",
+     "examples/tutorial/tests/conftest.py"
+    ],
+    "bm25_only": [
+     "tests/test_basic.py",
+     "tests/test_async.py",
+     "src/flask/debughelpers.py",
+     "tests/test_user_error_handler.py",
+     "tests/test_blueprints.py",
+     "tests/test_cli.py",
+     "tests/test_helpers.py",
+     "tests/test_reqctx.py",
+     "src/flask/app.py"
+    ],
+    "vector_only": [
+     "docs/blueprints.rst",
+     "tests/test_async.py",
+     "tests/test_blueprints.py",
+     "src/flask/wrappers.py",
+     "docs/errorhandling.rst",
+     "src/flask/app.py"
+    ],
+    "grep": [
+     "tests/test_blueprints.py",
+     "src/flask/blueprints.py",
+     "src/flask/cli.py",
+     "src/flask/app.py",
+     "src/flask/helpers.py",
+     "src/flask/scaffold.py",
+     "docs/quickstart.rst",
+     "src/flask/config.py",
+     "src/flask/ctx.py",
+     "tests/test_templating.py",
+     "docs/api.rst",
+     "src/flask/templating.py",
+     "src/flask/debughelpers.py",
+     "examples/tutorial/flaskr/auth.py",
+     "src/flask/views.py",
+     "tests/test_instance_config.py",
+     "src/flask/wrappers.py",
+     "examples/tutorial/tests/test_auth.py",
+     "src/flask/sessions.py",
+     "docs/signals.rst",
+     "examples/tutorial/flaskr/blog.py",
+     "docs/logging.rst",
+     "tests/test_user_error_handler.py",
+     "src/flask/__init__.py",
+     "src/flask/globals.py",
+     "examples/tutorial/flaskr/templates/auth/register.html",
+     "examples/tutorial/flaskr/templates/auth/login.html",
+     "docs/appcontext.rst",
+     "examples/celery/src/task_app/templates/index.html",
+     "src/flask/signals.py",
+     "src/flask/logging.py",
+     "examples/tutorial/flaskr/__init__.py",
+     "tests/test_apps/blueprintapp/__init__.py",
+     "src/flask/testing.py",
+     "examples/tutorial/tests/test_blog.py",
+     "examples/tutorial/tests/conftest.py",
+     "examples/javascript/tests/test_js_example.py",
+     "examples/celery/src/task_app/__init__.py",
+     "examples/celery/src/task_app/views.py",
+     "src/flask/typing.py",
+     "examples/tutorial/flaskr/templates/blog/create.html",
+     "examples/tutorial/flaskr/templates/blog/update.html",
+     "tests/test_apps/blueprintapp/apps/frontend/__init__.py",
+     "tests/test_apps/blueprintapp/apps/admin/__init__.py",
+     "examples/tutorial/LICENSE.rst",
+     "examples/tutorial/pyproject.toml",
+     "examples/tutorial/flaskr/templates/base.html",
+     "tests/templates/_macro.html",
+     "examples/javascript/pyproject.toml",
+     "examples/tutorial/tests/data.sql",
+     "examples/tutorial/flaskr/schema.sql",
+     "examples/tutorial/flaskr/templates/blog/index.html",
+     "examples/celery/pyproject.toml",
+     "src/flask/json/provider.py",
+     "src/flask/json/tag.py",
+     "README.rst",
+     "tests/test_apps/cliapp/inner1/__init__.py",
+     "examples/javascript/tests/conftest.py",
+     "tests/test_apps/cliapp/inner1/inner2/flask.py",
+     "tests/test_session_interface.py"
+    ]
+   },
+   "metrics": {
+    "full": {
+     "recall@5": 0.0,
+     "recall@10": 0.0,
+     "mrr": 0.0,
+     "hit": 0.0
+    },
+    "bm25_only": {
+     "recall@5": 0.0,
+     "recall@10": 0.0,
+     "mrr": 0.0,
+     "hit": 0.0
+    },
+    "vector_only": {
+     "recall@5": 0.0,
+     "recall@10": 0.0,
+     "mrr": 0.0,
+     "hit": 0.0
+    },
+    "grep": {
+     "recall@5": 1.0,
+     "recall@10": 1.0,
+     "mrr": 0.5,
+     "hit": 1.0
+    }
+   },
+   "status": "ok"
+  },
+  {
+   "instance_id": "pallets__flask-5063",
+   "repo": "pallets/flask",
+   "status": "error",
+   "error": "child produced no result (rc=1): [\"NameError: name 'grep_list' is not defined. Did you mean: 'graph_list'?\"]"
+  }
+ ]
+}

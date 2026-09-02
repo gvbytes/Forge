@@ -1,0 +1,143 @@
+{
+ "meta": {
+  "source": "princeton-nlp/SWE-bench_Lite",
+  "source_url": "https://huggingface.co/datasets/princeton-nlp/SWE-bench_Lite",
+  "access": "HF datasets-server /rows JSON API (no auth)",
+  "ground_truth_rule": "gold_files = patch-touched files that exist at base_commit and match indexer-supported extensions; files ADDED by the patch excluded",
+  "license_note": "SWE-bench is MIT-licensed; instances reference public OSS repos under their own licenses",
+  "seed": 42,
+  "count": 10
+ },
+ "instances": [
+  {
+   "instance_id": "pytest-dev__pytest-5103",
+   "repo": "pytest-dev/pytest",
+   "base_commit": "10ca84ffc56c2dd2d9dc4bd71b7b898e083500cd",
+   "problem_statement": "Unroll the iterable for all/any calls to get better reports\nSometime I need to assert some predicate on all of an iterable, and for that the builtin functions `all`/`any` are great - but the failure messages aren't useful at all!\r\nFor example - the same test written in three ways:\r\n\r\n- A generator expression\r\n```sh                                                                                                                                                                                                                         \r\n    def test_all_even():\r\n        even_stevens = list(range(1,100,2))\r\n>       assert all(is_even(number) for number in even_stevens)\r\nE       assert False\r\nE        +  where False = all(<generator object test_all_even.<locals>.<genexpr> at 0x101f82ed0>)\r\n```\r\n- A list comprehension\r\n```sh\r\n    def test_all_even():\r\n        even_stevens = list(range(1,100,2))\r\n>       assert all([is_even(number) for number in even_stevens])\r\nE       assert False\r\nE        +  where False = all([False, False, False, False, False, False, ...])\r\n```\r\n- A for loop\r\n```sh\r\n    def test_all_even():\r\n        even_stevens = list(range(1,100,2))\r\n        for number in even_stevens:\r\n>           assert is_even(number)\r\nE           assert False\r\nE            +  where False = is_even(1)\r\n\r\ntest_all_any.py:7: AssertionError\r\n```\r\nThe only one that gives a meaningful report is the for loop - but it's way more wordy, and `all` asserts don't translate to a for loop nicely (I'll have to write a `break` or a helper function - yuck)\r\nI propose the assertion re-writer \"unrolls\" the iterator to the third form, and then uses the already existing reports.\r\n\r\n- [x] Include a detailed description of the bug or suggestion\r\n- [x] `pip list` of the virtual environment you are using\r\n```\r\nPackage        Version\r\n-------------- -------\r\natomicwrites   1.3.0  \r\nattrs          19.1.0 \r\nmore-itertools 7.0.0  \r\npip            19.0.3 \r\npluggy         0.9.0  \r\npy             1.8.0  \r\npytest         4.4.0  \r\nsetuptools     40.8.0 \r\nsix            1.12.0 \r\n```\r\n- [x] pytest and operating system versions\r\n`platform darwin -- Python 3.7.3, pytest-4.4.0, py-1.8.0, pluggy-0.9.0`\r\n- [x] Minimal example if possible",
+   "changed_files": [
+    "src/_pytest/assertion/rewrite.py"
+   ],
+   "gold_files": [
+    "src/_pytest/assertion/rewrite.py"
+   ],
+   "version": "4.5"
+  },
+  {
+   "instance_id": "pytest-dev__pytest-8365",
+   "repo": "pytest-dev/pytest",
+   "base_commit": "4964b468c83c06971eb743fbc57cc404f760c573",
+   "problem_statement": "tmpdir creation fails when the username contains illegal characters for directory names\n`tmpdir`, `tmpdir_factory` and `tmp_path_factory` rely on `getpass.getuser()` for determining the `basetemp` directory. I found that the user name returned by `getpass.getuser()` may return characters that are not allowed for directory names. This may lead to errors while creating the temporary directory.\r\n\r\nThe situation in which I reproduced this issue was while being logged in through an ssh connection into my Windows 10 x64 Enterprise version (1909) using an OpenSSH_for_Windows_7.7p1 server. In this configuration the command `python -c \"import getpass; print(getpass.getuser())\"` returns my domain username e.g. `contoso\\john_doe` instead of `john_doe` as when logged in regularly using a local session.\r\n\r\nWhen trying to create a temp directory in pytest through e.g. `tmpdir_factory.mktemp('foobar')` this fails with the following error message:\r\n```\r\nself = WindowsPath('C:/Users/john_doe/AppData/Local/Temp/pytest-of-contoso/john_doe')\r\nmode = 511, parents = False, exist_ok = True\r\n\r\n    def mkdir(self, mode=0o777, parents=False, exist_ok=False):\r\n        \"\"\"\r\n        Create a new directory at this given path.\r\n        \"\"\"\r\n        if self._closed:\r\n            self._raise_closed()\r\n        try:\r\n>           self._accessor.mkdir(self, mode)\r\nE           FileNotFoundError: [WinError 3] The system cannot find the path specified: 'C:\\\\Users\\\\john_doe\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-contoso\\\\john_doe'\r\n\r\nC:\\Python38\\lib\\pathlib.py:1266: FileNotFoundError\r\n```\r\n\r\nI could also reproduce this without the complicated ssh/windows setup with pytest 6.2.2 using the following commands from a `cmd`:\r\n```bat\r\necho def test_tmpdir(tmpdir):>test_tmp.py\r\necho   pass>>test_tmp.py\r\nset LOGNAME=contoso\\john_doe\r\npy.test test_tmp.py\r\n```\r\n\r\nThanks for having a look at this!",
+   "changed_files": [
+    "src/_pytest/tmpdir.py"
+   ],
+   "gold_files": [
+    "src/_pytest/tmpdir.py"
+   ],
+   "version": "6.3"
+  },
+  {
+   "instance_id": "pytest-dev__pytest-7220",
+   "repo": "pytest-dev/pytest",
+   "base_commit": "56bf819c2f4eaf8b36bd8c42c06bb59d5a3bfc0f",
+   "problem_statement": "Wrong path to test file when directory changed in fixture\nFiles are shown as relative to new directory when working directory is changed in a fixture. This makes it impossible to jump to the error as the editor is unaware of the directory change. The displayed directory should stay relative to the original directory.\r\n\r\ntest_path_error.py:\r\n```python\r\nimport os\r\nimport errno\r\nimport shutil\r\n\r\nimport pytest\r\n\r\n\r\n@pytest.fixture\r\ndef private_dir():  # or (monkeypatch)\r\n    out_dir = 'ddd'\r\n\r\n    try:\r\n        shutil.rmtree(out_dir)\r\n    except OSError as ex:\r\n        if ex.errno != errno.ENOENT:\r\n            raise\r\n    os.mkdir(out_dir)\r\n\r\n    old_dir = os.getcwd()\r\n    os.chdir(out_dir)\r\n    yield out_dir\r\n    os.chdir(old_dir)\r\n\r\n    # Same issue if using:\r\n    # monkeypatch.chdir(out_dir)\r\n\r\n\r\ndef test_show_wrong_path(private_dir):\r\n    assert False\r\n```\r\n\r\n```diff\r\n+ Expected: test_path_error.py:29: AssertionError\r\n- Displayed: ../test_path_error.py:29: AssertionError\r\n```\r\n\r\nThe full output is:\r\n```\r\n-*- mode: compilation; default-directory: \"~/src/pytest_path_error/\" -*-\r\nCompilation started at Fri Jan 10 00:05:52\r\n\r\nnox\r\nnox > Running session test\r\nnox > Creating virtual environment (virtualenv) using python3.7 in .nox/test\r\nnox > pip install pytest>=5.3\r\nnox > pip freeze\r\nattrs==19.3.0\r\nimportlib-metadata==1.3.0\r\nmore-itertools==8.0.2\r\npackaging==20.0\r\npluggy==0.13.1\r\npy==1.8.1\r\npyparsing==2.4.6\r\npytest==5.3.2\r\nsix==1.13.0\r\nwcwidth==0.1.8\r\nzipp==0.6.0\r\nnox > pytest \r\n================================= test session starts =================================\r\nplatform linux -- Python 3.7.5, pytest-5.3.2, py-1.8.1, pluggy-0.13.1\r\nrootdir: /home/lhn/src/pytest_path_error\r\ncollected 1 item                                                                      \r\n\r\ntest_path_error.py F                                                            [100%]\r\n\r\n====================================== FAILURES =======================================\r\n________________________________ test_show_wrong_path _________________________________\r\n\r\nprivate_dir = 'ddd'\r\n\r\n    def test_show_wrong_path(private_dir):\r\n>       assert False\r\nE       assert False\r\n\r\n../test_path_error.py:29: AssertionError\r\n================================== 1 failed in 0.03s ==================================\r\nnox > Command pytest  failed with exit code 1\r\nnox > Session test failed.\r\n\r\nCompilation exited abnormally with code 1 at Fri Jan 10 00:06:01\r\n```\r\n\r\nnoxfile.py:\r\n```python\r\nimport nox\r\n\r\n@nox.session(python='3.7')\r\ndef test(session):\r\n    session.install('pytest>=5.3')\r\n    session.run('pip', 'freeze')\r\n    session.run('pytest')\r\n```",
+   "changed_files": [
+    "src/_pytest/nodes.py"
+   ],
+   "gold_files": [
+    "src/_pytest/nodes.py"
+   ],
+   "version": "5.4"
+  },
+  {
+   "instance_id": "pytest-dev__pytest-5692",
+   "repo": "pytest-dev/pytest",
+   "base_commit": "29e336bd9bf87eaef8e2683196ee1975f1ad4088",
+   "problem_statement": "Hostname and timestamp properties in generated JUnit XML reports\nPytest enables generating JUnit XML reports of the tests.\r\n\r\nHowever, there are some properties missing, specifically `hostname` and `timestamp` from the `testsuite` XML element. Is there an option to include them?\r\n\r\nExample of a pytest XML report:\r\n```xml\r\n<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<testsuite errors=\"0\" failures=\"2\" name=\"check\" skipped=\"0\" tests=\"4\" time=\"0.049\">\r\n\t<testcase classname=\"test_sample.TestClass\" file=\"test_sample.py\" line=\"3\" name=\"test_addOne_normal\" time=\"0.001\"></testcase>\r\n\t<testcase classname=\"test_sample.TestClass\" file=\"test_sample.py\" line=\"6\" name=\"test_addOne_edge\" time=\"0.001\"></testcase>\r\n</testsuite>\r\n```\r\n\r\nExample of a junit XML report:\r\n```xml\r\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<testsuite name=\"location.GeoLocationTest\" tests=\"2\" skipped=\"0\" failures=\"0\" errors=\"0\" timestamp=\"2019-04-22T10:32:27\" hostname=\"Anass-MacBook-Pro.local\" time=\"0.048\">\r\n  <properties/>\r\n  <testcase name=\"testIoException()\" classname=\"location.GeoLocationTest\" time=\"0.044\"/>\r\n  <testcase name=\"testJsonDeserialization()\" classname=\"location.GeoLocationTest\" time=\"0.003\"/>\r\n  <system-out><![CDATA[]]></system-out>\r\n  <system-err><![CDATA[]]></system-err>\r\n</testsuite>\r\n```",
+   "changed_files": [
+    "src/_pytest/junitxml.py"
+   ],
+   "gold_files": [
+    "src/_pytest/junitxml.py"
+   ],
+   "version": "5.0"
+  },
+  {
+   "instance_id": "pytest-dev__pytest-5227",
+   "repo": "pytest-dev/pytest",
+   "base_commit": "2051e30b9b596e944524ccb787ed20f9f5be93e3",
+   "problem_statement": "Improve default logging format\nCurrently it is:\r\n\r\n> DEFAULT_LOG_FORMAT = \"%(filename)-25s %(lineno)4d %(levelname)-8s %(message)s\"\r\n\r\nI think `name` (module name) would be very useful here, instead of just the base filename.\r\n\r\n(It might also be good to have the relative path there (maybe at the end), but it is usually still very long (but e.g. `$VIRTUAL_ENV` could be substituted therein))\r\n\r\nCurrently it would look like this:\r\n```\r\nutils.py                   114 DEBUG    (0.000) SELECT \"app_url\".\"id\", \"app_url\".\"created\", \"app_url\".\"url\" FROM \"app_url\" WHERE \"app_url\".\"id\" = 2; args=(2,)\r\nmultipart.py               604 DEBUG    Calling on_field_start with no data\r\n```\r\n\r\n\r\nUsing `DEFAULT_LOG_FORMAT = \"%(levelname)-8s %(name)s:%(filename)s:%(lineno)d %(message)s\"` instead:\r\n\r\n```\r\nDEBUG    django.db.backends:utils.py:114 (0.000) SELECT \"app_url\".\"id\", \"app_url\".\"created\", \"app_url\".\"url\" FROM \"app_url\" WHERE \"app_url\".\"id\" = 2; args=(2,)\r\nDEBUG    multipart.multipart:multipart.py:604 Calling on_field_start with no data\r\n```",
+   "changed_files": [
+    "src/_pytest/logging.py"
+   ],
+   "gold_files": [
+    "src/_pytest/logging.py"
+   ],
+   "version": "4.4"
+  },
+  {
+   "instance_id": "pytest-dev__pytest-5495",
+   "repo": "pytest-dev/pytest",
+   "base_commit": "1aefb24b37c30fba8fd79a744829ca16e252f340",
+   "problem_statement": "Confusing assertion rewriting message with byte strings\nThe comparison with assertion rewriting for byte strings is confusing: \r\n```\r\n    def test_b():\r\n>       assert b\"\" == b\"42\"\r\nE       AssertionError: assert b'' == b'42'\r\nE         Right contains more items, first extra item: 52\r\nE         Full diff:\r\nE         - b''\r\nE         + b'42'\r\nE         ?   ++\r\n```\r\n\r\n52 is the ASCII ordinal of \"4\" here.\r\n\r\nIt became clear to me when using another example:\r\n\r\n```\r\n    def test_b():\r\n>       assert b\"\" == b\"1\"\r\nE       AssertionError: assert b'' == b'1'\r\nE         Right contains more items, first extra item: 49\r\nE         Full diff:\r\nE         - b''\r\nE         + b'1'\r\nE         ?   +\r\n```\r\n\r\nNot sure what should/could be done here.",
+   "changed_files": [
+    "src/_pytest/assertion/util.py"
+   ],
+   "gold_files": [
+    "src/_pytest/assertion/util.py"
+   ],
+   "version": "4.6"
+  },
+  {
+   "instance_id": "pytest-dev__pytest-5413",
+   "repo": "pytest-dev/pytest",
+   "base_commit": "450d2646233c670654744d3d24330b69895bb9d2",
+   "problem_statement": "str() on the pytest.raises context variable doesn't behave same as normal exception catch\nPytest 4.6.2, macOS 10.14.5\r\n\r\n```Python\r\ntry:\r\n    raise LookupError(\r\n        f\"A\\n\"\r\n        f\"B\\n\"\r\n        f\"C\"\r\n    )\r\nexcept LookupError as e:\r\n    print(str(e))\r\n```\r\nprints\r\n\r\n> A\r\n> B\r\n> C\r\n\r\nBut\r\n\r\n```Python\r\nwith pytest.raises(LookupError) as e:\r\n    raise LookupError(\r\n        f\"A\\n\"\r\n        f\"B\\n\"\r\n        f\"C\"\r\n    )\r\n\r\nprint(str(e))\r\n```\r\n\r\nprints\r\n\r\n> <console>:3: LookupError: A\r\n\r\nIn order to get the full error message, one must do `str(e.value)`, which is documented, but this is a different interaction. Any chance the behavior could be changed to eliminate this gotcha?\r\n\r\n-----\r\n\r\nPip list gives\r\n\r\n```\r\nPackage            Version  Location\r\n------------------ -------- ------------------------------------------------------\r\napipkg             1.5\r\nasn1crypto         0.24.0\r\natomicwrites       1.3.0\r\nattrs              19.1.0\r\naws-xray-sdk       0.95\r\nboto               2.49.0\r\nboto3              1.9.51\r\nbotocore           1.12.144\r\ncertifi            2019.3.9\r\ncffi               1.12.3\r\nchardet            3.0.4\r\nClick              7.0\r\ncodacy-coverage    1.3.11\r\ncolorama           0.4.1\r\ncoverage           4.5.3\r\ncryptography       2.6.1\r\ndecorator          4.4.0\r\ndocker             3.7.2\r\ndocker-pycreds     0.4.0\r\ndocutils           0.14\r\necdsa              0.13.2\r\nexecnet            1.6.0\r\nfuture             0.17.1\r\nidna               2.8\r\nimportlib-metadata 0.17\r\nipaddress          1.0.22\r\nJinja2             2.10.1\r\njmespath           0.9.4\r\njsondiff           1.1.1\r\njsonpickle         1.1\r\njsonschema         2.6.0\r\nMarkupSafe         1.1.1\r\nmock               3.0.4\r\nmore-itertools     7.0.0\r\nmoto               1.3.7\r\nneobolt            1.7.10\r\nneotime            1.7.4\r\nnetworkx           2.1\r\nnumpy              1.15.0\r\npackaging          19.0\r\npandas             0.24.2\r\npip                19.1.1\r\npluggy             0.12.0\r\nprompt-toolkit     2.0.9\r\npy                 1.8.0\r\npy2neo             4.2.0\r\npyaml              19.4.1\r\npycodestyle        2.5.0\r\npycparser          2.19\r\npycryptodome       3.8.1\r\nPygments           2.3.1\r\npyOpenSSL          19.0.0\r\npyparsing          2.4.0\r\npytest             4.6.2\r\npytest-cache       1.0\r\npytest-codestyle   1.4.0\r\npytest-cov         2.6.1\r\npytest-forked      1.0.2\r\npython-dateutil    2.7.3\r\npython-jose        2.0.2\r\npytz               2018.5\r\nPyYAML             5.1\r\nrequests           2.21.0\r\nrequests-mock      1.5.2\r\nresponses          0.10.6\r\ns3transfer         0.1.13\r\nsetuptools         41.0.1\r\nsix                1.11.0\r\nsqlite3worker      1.1.7\r\ntabulate           0.8.3\r\nurllib3            1.24.3\r\nwcwidth            0.1.7\r\nwebsocket-client   0.56.0\r\nWerkzeug           0.15.2\r\nwheel              0.33.1\r\nwrapt              1.11.1\r\nxlrd               1.1.0\r\nxmltodict          0.12.0\r\nzipp               0.5.1\r\n```",
+   "changed_files": [
+    "src/_pytest/_code/code.py"
+   ],
+   "gold_files": [
+    "src/_pytest/_code/code.py"
+   ],
+   "version": "4.6"
+  },
+  {
+   "instance_id": "pytest-dev__pytest-7432",
+   "repo": "pytest-dev/pytest",
+   "base_commit": "e6e300e729dd33956e5448d8be9a0b1540b4e53a",
+   "problem_statement": "skipping: --runxfail breaks pytest.mark.skip location reporting\npytest versions: 5.4.x, current master\r\n\r\nWhen `@pytest.mark.skip`/`skipif` marks are used to skip a test, for example\r\n\r\n```py\r\nimport pytest\r\n@pytest.mark.skip\r\ndef test_skip_location() -> None:\r\n    assert 0\r\n```\r\n\r\nthe expected skip location reported should point to the item itself, and this is indeed what happens when running with `pytest -rs`:\r\n\r\n```\r\nSKIPPED [1] test_it.py:3: unconditional skip\r\n```\r\n\r\nHowever, adding `pytest -rs --runxfail` breaks this:\r\n\r\n```\r\nSKIPPED [1] src/_pytest/skipping.py:238: unconditional skip\r\n```\r\n\r\nThe `--runxfail` is only about xfail and should not affect this at all.\r\n\r\n---\r\n\r\nHint: the bug is in `src/_pytest/skipping.py`, the `pytest_runtest_makereport` hook.",
+   "changed_files": [
+    "src/_pytest/skipping.py"
+   ],
+   "gold_files": [
+    "src/_pytest/skipping.py"
+   ],
+   "version": "5.4"
+  },
+  {
+   "instance_id": "pytest-dev__pytest-7373",
+   "repo": "pytest-dev/pytest",
+   "base_commit": "7b77fc086aab8b3a8ebc890200371884555eea1e",
+   "problem_statement": "Incorrect caching of skipif/xfail string condition evaluation\nVersion: pytest 5.4.3, current master\r\n\r\npytest caches the evaluation of the string in e.g. `@pytest.mark.skipif(\"sys.platform == 'win32'\")`. The caching key is only the string itself (see `cached_eval` in `_pytest/mark/evaluate.py`). However, the evaluation also depends on the item's globals, so the caching can lead to incorrect results. Example:\r\n\r\n```py\r\n# test_module_1.py\r\nimport pytest\r\n\r\nskip = True\r\n\r\n@pytest.mark.skipif(\"skip\")\r\ndef test_should_skip():\r\n    assert False\r\n```\r\n\r\n```py\r\n# test_module_2.py\r\nimport pytest\r\n\r\nskip = False\r\n\r\n@pytest.mark.skipif(\"skip\")\r\ndef test_should_not_skip():\r\n    assert False\r\n```\r\n\r\nRunning `pytest test_module_1.py test_module_2.py`.\r\n\r\nExpected: `test_should_skip` is skipped, `test_should_not_skip` is not skipped.\r\n\r\nActual: both are skipped.\r\n\r\n---\r\n\r\nI think the most appropriate fix is to simply remove the caching, which I don't think is necessary really, and inline `cached_eval` into `MarkEvaluator._istrue`.",
+   "changed_files": [
+    "src/_pytest/mark/evaluate.py"
+   ],
+   "gold_files": [
+    "src/_pytest/mark/evaluate.py"
+   ],
+   "version": "5.4"
+  },
+  {
+   "instance_id": "pytest-dev__pytest-8906",
+   "repo": "pytest-dev/pytest",
+   "base_commit": "69356d20cfee9a81972dcbf93d8caf9eabe113e8",
+   "problem_statement": "Improve handling of skip for module level\nThis is potentially about updating docs, updating error messages or introducing a new API.\r\n\r\nConsider the following scenario:\r\n\r\n`pos_only.py` is using Python 3,8 syntax:\r\n```python\r\ndef foo(a, /, b):\r\n    return a + b\r\n```\r\n\r\nIt should not be tested under Python 3.6 and 3.7.\r\nThis is a proper way to skip the test in Python older than 3.8:\r\n```python\r\nfrom pytest import raises, skip\r\nimport sys\r\nif sys.version_info < (3, 8):\r\n    skip(msg=\"Requires Python >= 3.8\", allow_module_level=True)\r\n\r\n# import must be after the module level skip:\r\nfrom pos_only import *\r\n\r\ndef test_foo():\r\n    assert foo(10, 20) == 30\r\n    assert foo(10, b=20) == 30\r\n    with raises(TypeError):\r\n        assert foo(a=10, b=20)\r\n```\r\n\r\nMy actual test involves parameterize and a 3.8 only class, so skipping the test itself is not sufficient because the 3.8 class was used in the parameterization.\r\n\r\nA naive user will try to initially skip the module like:\r\n\r\n```python\r\nif sys.version_info < (3, 8):\r\n    skip(msg=\"Requires Python >= 3.8\")\r\n```\r\nThis issues this error:\r\n\r\n>Using pytest.skip outside of a test is not allowed. To decorate a test function, use the @pytest.mark.skip or @pytest.mark.skipif decorators instead, and to skip a module use `pytestmark = pytest.mark.{skip,skipif}.\r\n\r\nThe proposed solution `pytestmark = pytest.mark.{skip,skipif}`, does not work  in my case: pytest continues to process the file and fail when it hits the 3.8 syntax (when running with an older version of Python).\r\n\r\nThe correct solution, to use skip as a function is actively discouraged by the error message.\r\n\r\nThis area feels a bit unpolished.\r\nA few ideas to improve:\r\n\r\n1. Explain skip with  `allow_module_level` in the error message. this seems in conflict with the spirit of the message.\r\n2. Create an alternative API to skip a module to make things easier: `skip_module(\"reason\")`, which can call `_skip(msg=msg, allow_module_level=True)`.",
+   "changed_files": [
+    "src/_pytest/python.py"
+   ],
+   "gold_files": [
+    "src/_pytest/python.py"
+   ],
+   "version": "7.0"
+  }
+ ]
+}

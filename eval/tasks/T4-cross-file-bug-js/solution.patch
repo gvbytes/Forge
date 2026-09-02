@@ -1,0 +1,13 @@
+diff --git a/js/util/date.js b/js/util/date.js
+index 664c744..d8161e6 100644
+--- a/js/util/date.js
++++ b/js/util/date.js
+@@ -18,7 +18,7 @@ var MONTH_NAMES = [
+  * number of the 0th of the following month (0-based months).
+  */
+ function daysInMonth(year, month) {
+-  return new Date(year, month, 0).getDate();
++  return new Date(year, month + 1, 0).getDate();
+ }
+ 
+ /**

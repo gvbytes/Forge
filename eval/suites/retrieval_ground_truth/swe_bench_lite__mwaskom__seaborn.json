@@ -1,0 +1,65 @@
+{
+ "meta": {
+  "source": "princeton-nlp/SWE-bench_Lite",
+  "source_url": "https://huggingface.co/datasets/princeton-nlp/SWE-bench_Lite",
+  "access": "HF datasets-server /rows JSON API (no auth)",
+  "ground_truth_rule": "gold_files = patch-touched files that exist at base_commit and match indexer-supported extensions; files ADDED by the patch excluded",
+  "license_note": "SWE-bench is MIT-licensed; instances reference public OSS repos under their own licenses",
+  "seed": 42,
+  "count": 4
+ },
+ "instances": [
+  {
+   "instance_id": "mwaskom__seaborn-3407",
+   "repo": "mwaskom/seaborn",
+   "base_commit": "515286e02be3e4c0ff2ef4addb34a53c4a676ee4",
+   "problem_statement": "pairplot raises KeyError with MultiIndex DataFrame\nWhen trying to pairplot a MultiIndex DataFrame, `pairplot` raises a `KeyError`:\r\n\r\nMRE:\r\n\r\n```python\r\nimport numpy as np\r\nimport pandas as pd\r\nimport seaborn as sns\r\n\r\n\r\ndata = {\r\n    (\"A\", \"1\"): np.random.rand(100),\r\n    (\"A\", \"2\"): np.random.rand(100),\r\n    (\"B\", \"1\"): np.random.rand(100),\r\n    (\"B\", \"2\"): np.random.rand(100),\r\n}\r\ndf = pd.DataFrame(data)\r\nsns.pairplot(df)\r\n```\r\n\r\nOutput:\r\n\r\n```\r\n[c:\\Users\\KLuu\\anaconda3\\lib\\site-packages\\seaborn\\axisgrid.py](file:///C:/Users/KLuu/anaconda3/lib/site-packages/seaborn/axisgrid.py) in pairplot(data, hue, hue_order, palette, vars, x_vars, y_vars, kind, diag_kind, markers, height, aspect, corner, dropna, plot_kws, diag_kws, grid_kws, size)\r\n   2142     diag_kws.setdefault(\"legend\", False)\r\n   2143     if diag_kind == \"hist\":\r\n-> 2144         grid.map_diag(histplot, **diag_kws)\r\n   2145     elif diag_kind == \"kde\":\r\n   2146         diag_kws.setdefault(\"fill\", True)\r\n\r\n[c:\\Users\\KLuu\\anaconda3\\lib\\site-packages\\seaborn\\axisgrid.py](file:///C:/Users/KLuu/anaconda3/lib/site-packages/seaborn/axisgrid.py) in map_diag(self, func, **kwargs)\r\n   1488                 plt.sca(ax)\r\n   1489 \r\n-> 1490             vector = self.data[var]\r\n   1491             if self._hue_var is not None:\r\n   1492                 hue = self.data[self._hue_var]\r\n\r\n[c:\\Users\\KLuu\\anaconda3\\lib\\site-packages\\pandas\\core\\frame.py](file:///C:/Users/KLuu/anaconda3/lib/site-packages/pandas/core/frame.py) in __getitem__(self, key)\r\n   3765             if is_iterator(key):\r\n   3766                 key = list(key)\r\n-> 3767             indexer = self.columns._get_indexer_strict(key, \"columns\")[1]\r\n   3768 \r\n   3769         # take() does not accept boolean indexers\r\n\r\n[c:\\Users\\KLuu\\anaconda3\\lib\\site-packages\\pandas\\core\\indexes\\multi.py](file:///C:/Users/KLuu/anaconda3/lib/site-packages/pandas/core/indexes/multi.py) in _get_indexer_strict(self, key, axis_name)\r\n   2534             indexer = self._get_indexer_level_0(keyarr)\r\n   2535 \r\n-> 2536             self._raise_if_missing(key, indexer, axis_name)\r\n   2537             return self[indexer], indexer\r\n   2538 \r\n\r\n[c:\\Users\\KLuu\\anaconda3\\lib\\site-packages\\pandas\\core\\indexes\\multi.py](file:///C:/Users/KLuu/anaconda3/lib/site-packages/pandas/core/indexes/multi.py) in _raise_if_missing(self, key, indexer, axis_name)\r\n   2552                 cmask = check == -1\r\n   2553                 if cmask.any():\r\n-> 2554                     raise KeyError(f\"{keyarr[cmask]} not in index\")\r\n   2555                 # We get here when levels still contain values which are not\r\n   2556                 # actually in Index anymore\r\n\r\nKeyError: \"['1'] not in index\"\r\n```\r\n\r\nA workaround is to \"flatten\" the columns:\r\n\r\n```python\r\ndf.columns = [\"\".join(column) for column in df.columns]\r\n```",
+   "changed_files": [
+    "seaborn/axisgrid.py"
+   ],
+   "gold_files": [
+    "seaborn/axisgrid.py"
+   ],
+   "version": "0.13"
+  },
+  {
+   "instance_id": "mwaskom__seaborn-3010",
+   "repo": "mwaskom/seaborn",
+   "base_commit": "0f5a013e2cf43562deec3b879458e59a73853813",
+   "problem_statement": "PolyFit is not robust to missing data\n```python\r\nso.Plot([1, 2, 3, None, 4], [1, 2, 3, 4, 5]).add(so.Line(), so.PolyFit())\r\n```\r\n\r\n<details><summary>Traceback</summary>\r\n\r\n```python-traceback\r\n---------------------------------------------------------------------------\r\nLinAlgError                               Traceback (most recent call last)\r\nFile ~/miniconda3/envs/seaborn-py39-latest/lib/python3.9/site-packages/IPython/core/formatters.py:343, in BaseFormatter.__call__(self, obj)\r\n    341     method = get_real_method(obj, self.print_method)\r\n    342     if method is not None:\r\n--> 343         return method()\r\n    344     return None\r\n    345 else:\r\n\r\nFile ~/code/seaborn/seaborn/_core/plot.py:265, in Plot._repr_png_(self)\r\n    263 def _repr_png_(self) -> tuple[bytes, dict[str, float]]:\r\n--> 265     return self.plot()._repr_png_()\r\n\r\nFile ~/code/seaborn/seaborn/_core/plot.py:804, in Plot.plot(self, pyplot)\r\n    800 \"\"\"\r\n    801 Compile the plot spec and return the Plotter object.\r\n    802 \"\"\"\r\n    803 with theme_context(self._theme_with_defaults()):\r\n--> 804     return self._plot(pyplot)\r\n\r\nFile ~/code/seaborn/seaborn/_core/plot.py:822, in Plot._plot(self, pyplot)\r\n    819 plotter._setup_scales(self, common, layers, coord_vars)\r\n    821 # Apply statistical transform(s)\r\n--> 822 plotter._compute_stats(self, layers)\r\n    824 # Process scale spec for semantic variables and coordinates computed by stat\r\n    825 plotter._setup_scales(self, common, layers)\r\n\r\nFile ~/code/seaborn/seaborn/_core/plot.py:1110, in Plotter._compute_stats(self, spec, layers)\r\n   1108     grouper = grouping_vars\r\n   1109 groupby = GroupBy(grouper)\r\n-> 1110 res = stat(df, groupby, orient, scales)\r\n   1112 if pair_vars:\r\n   1113     data.frames[coord_vars] = res\r\n\r\nFile ~/code/seaborn/seaborn/_stats/regression.py:41, in PolyFit.__call__(self, data, groupby, orient, scales)\r\n     39 def __call__(self, data, groupby, orient, scales):\r\n---> 41     return groupby.apply(data, self._fit_predict)\r\n\r\nFile ~/code/seaborn/seaborn/_core/groupby.py:109, in GroupBy.apply(self, data, func, *args, **kwargs)\r\n    106 grouper, groups = self._get_groups(data)\r\n    108 if not grouper:\r\n--> 109     return self._reorder_columns(func(data, *args, **kwargs), data)\r\n    111 parts = {}\r\n    112 for key, part_df in data.groupby(grouper, sort=False):\r\n\r\nFile ~/code/seaborn/seaborn/_stats/regression.py:30, in PolyFit._fit_predict(self, data)\r\n     28     xx = yy = []\r\n     29 else:\r\n---> 30     p = np.polyfit(x, y, self.order)\r\n     31     xx = np.linspace(x.min(), x.max(), self.gridsize)\r\n     32     yy = np.polyval(p, xx)\r\n\r\nFile <__array_function__ internals>:180, in polyfit(*args, **kwargs)\r\n\r\nFile ~/miniconda3/envs/seaborn-py39-latest/lib/python3.9/site-packages/numpy/lib/polynomial.py:668, in polyfit(x, y, deg, rcond, full, w, cov)\r\n    666 scale = NX.sqrt((lhs*lhs).sum(axis=0))\r\n    667 lhs /= scale\r\n--> 668 c, resids, rank, s = lstsq(lhs, rhs, rcond)\r\n    669 c = (c.T/scale).T  # broadcast scale coefficients\r\n    671 # warn on rank reduction, which indicates an ill conditioned matrix\r\n\r\nFile <__array_function__ internals>:180, in lstsq(*args, **kwargs)\r\n\r\nFile ~/miniconda3/envs/seaborn-py39-latest/lib/python3.9/site-packages/numpy/linalg/linalg.py:2300, in lstsq(a, b, rcond)\r\n   2297 if n_rhs == 0:\r\n   2298     # lapack can't handle n_rhs = 0 - so allocate the array one larger in that axis\r\n   2299     b = zeros(b.shape[:-2] + (m, n_rhs + 1), dtype=b.dtype)\r\n-> 2300 x, resids, rank, s = gufunc(a, b, rcond, signature=signature, extobj=extobj)\r\n   2301 if m == 0:\r\n   2302     x[...] = 0\r\n\r\nFile ~/miniconda3/envs/seaborn-py39-latest/lib/python3.9/site-packages/numpy/linalg/linalg.py:101, in _raise_linalgerror_lstsq(err, flag)\r\n    100 def _raise_linalgerror_lstsq(err, flag):\r\n--> 101     raise LinAlgError(\"SVD did not converge in Linear Least Squares\")\r\n\r\nLinAlgError: SVD did not converge in Linear Least Squares\r\n\r\n```\r\n\r\n</details>",
+   "changed_files": [
+    "seaborn/_stats/regression.py"
+   ],
+   "gold_files": [
+    "seaborn/_stats/regression.py"
+   ],
+   "version": "0.12"
+  },
+  {
+   "instance_id": "mwaskom__seaborn-3190",
+   "repo": "mwaskom/seaborn",
+   "base_commit": "4a9e54962a29c12a8b103d75f838e0e795a6974d",
+   "problem_statement": "Color mapping fails with boolean data\n```python\r\nso.Plot([\"a\", \"b\"], [1, 2], color=[True, False]).add(so.Bar())\r\n```\r\n```python-traceback\r\n---------------------------------------------------------------------------\r\nTypeError                                 Traceback (most recent call last)\r\n...\r\nFile ~/code/seaborn/seaborn/_core/plot.py:841, in Plot._plot(self, pyplot)\r\n    838 plotter._compute_stats(self, layers)\r\n    840 # Process scale spec for semantic variables and coordinates computed by stat\r\n--> 841 plotter._setup_scales(self, common, layers)\r\n    843 # TODO Remove these after updating other methods\r\n    844 # ---- Maybe have debug= param that attaches these when True?\r\n    845 plotter._data = common\r\n\r\nFile ~/code/seaborn/seaborn/_core/plot.py:1252, in Plotter._setup_scales(self, p, common, layers, variables)\r\n   1250     self._scales[var] = Scale._identity()\r\n   1251 else:\r\n-> 1252     self._scales[var] = scale._setup(var_df[var], prop)\r\n   1254 # Everything below here applies only to coordinate variables\r\n   1255 # We additionally skip it when we're working with a value\r\n   1256 # that is derived from a coordinate we've already processed.\r\n   1257 # e.g., the Stat consumed y and added ymin/ymax. In that case,\r\n   1258 # we've already setup the y scale and ymin/max are in scale space.\r\n   1259 if axis is None or (var != coord and coord in p._variables):\r\n\r\nFile ~/code/seaborn/seaborn/_core/scales.py:351, in ContinuousBase._setup(self, data, prop, axis)\r\n    349 vmin, vmax = axis.convert_units((vmin, vmax))\r\n    350 a = forward(vmin)\r\n--> 351 b = forward(vmax) - forward(vmin)\r\n    353 def normalize(x):\r\n    354     return (x - a) / b\r\n\r\nTypeError: numpy boolean subtract, the `-` operator, is not supported, use the bitwise_xor, the `^` operator, or the logical_xor function instead.\r\n```",
+   "changed_files": [
+    "seaborn/_core/scales.py"
+   ],
+   "gold_files": [
+    "seaborn/_core/scales.py"
+   ],
+   "version": "0.12"
+  },
+  {
+   "instance_id": "mwaskom__seaborn-2848",
+   "repo": "mwaskom/seaborn",
+   "base_commit": "94621cef29f80282436d73e8d2c0aa76dab81273",
+   "problem_statement": "pairplot fails with hue_order not containing all hue values in seaborn 0.11.1\nIn seaborn < 0.11, one could plot only a subset of the values in the hue column, by passing a hue_order list containing only the desired values. Points with hue values not in the list were simply not plotted.\n```python\niris = sns.load_dataset(\"iris\")`\n# The hue column contains three different species; here we want to plot two\nsns.pairplot(iris, hue=\"species\", hue_order=[\"setosa\", \"versicolor\"])\n```\n\nThis no longer works in 0.11.1. Passing a hue_order list that does not contain some of the values in the hue column raises a long, ugly error traceback. The first exception arises in seaborn/_core.py:\n```\nTypeError: ufunc 'isnan' not supported for the input types, and the inputs could not be safely coerced to any supported types according to the casting rule ''safe''\n```\nseaborn version: 0.11.1\nmatplotlib version: 3.3.2\nmatplotlib backends: MacOSX, Agg or jupyter notebook inline.",
+   "changed_files": [
+    "seaborn/_oldcore.py"
+   ],
+   "gold_files": [
+    "seaborn/_oldcore.py"
+   ],
+   "version": "0.12"
+  }
+ ]
+}

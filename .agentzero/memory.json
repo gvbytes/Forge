@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "projectName": "agentzero-gvbytes",
+  "updatedAt": 1788342870764,
+  "items": [
+    {
+      "id": "default-pref-1",
+      "category": "preference",
+      "text": "Keep code clean, modular, and well-typed. Prefer explicit error handling over silent failures.",
+      "createdAt": 1788283060409,
+      "active": true
+    },
+    {
+      "id": "default-pref-2",
+      "category": "convention",
+      "text": "Perform surgical line-level edits on existing files instead of rewriting from scratch.",
+      "createdAt": 1788283060409,
+      "active": true
+    }
+  ]
+}

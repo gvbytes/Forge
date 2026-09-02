@@ -1,0 +1,86 @@
+diff --git a/README.md b/README.md
+index f88b437..937f311 100644
+--- a/README.md
++++ b/README.md
+@@ -11,6 +11,7 @@ notes [--root DIR] add TITLE [--body TEXT]   # create a note
+ notes [--root DIR] list                      # ids + titles
+ notes [--root DIR] show ID                   # print the markdown
+ notes [--root DIR] rm ID                     # delete a note
++notes [--root DIR] search TEXT               # grep across note bodies
+ ```
+ 
+ The notes home resolves to `--root`, else `$NOTES_HOME`, else `~/.notes`.
+@@ -23,6 +24,3 @@ noteslib.py        storage layer: create/list/read/delete notes
+ tests/             pytest suite for existing commands (`pytest -q`)
+ ```
+ 
+-## Roadmap
+-
+-* full-text `search TEXT` across note bodies — planned, not yet built.
+diff --git a/notes.py b/notes.py
+index a7c2668..2468bc4 100644
+--- a/notes.py
++++ b/notes.py
+@@ -6,6 +6,7 @@ Usage:
+     notes [--root DIR] list
+     notes [--root DIR] show ID
+     notes [--root DIR] rm ID
++    notes [--root DIR] search TEXT
+ 
+ Notes are plain ``.md`` files inside the notes home (``--root``, the
+ ``NOTES_HOME`` environment variable, or ``~/.notes``).
+@@ -35,6 +36,9 @@ def build_parser() -> argparse.ArgumentParser:
+     p_rm = sub.add_parser("rm", help="delete a note")
+     p_rm.add_argument("id", type=int)
+ 
++    p_search = sub.add_parser("search", help="case-insensitive grep across note bodies")
++    p_search.add_argument("needle")
++
+     return parser
+ 
+ 
+@@ -67,6 +71,11 @@ def main(argv: list[str] | None = None) -> int:
+         print(f"note {ns.id} not found", file=sys.stderr)
+         return 1
+ 
++    if ns.cmd == "search":
++        for hit in noteslib.search_notes(root, ns.needle):
++            print(hit)
++        return 0
++
+     return 2
+ 
+ 
+diff --git a/noteslib.py b/noteslib.py
+index 9281c38..9ec5498 100644
+--- a/noteslib.py
++++ b/noteslib.py
+@@ -106,3 +106,28 @@ def delete_note(root: str | None, note_id: int) -> bool:
+     del meta["notes"][str(note_id)]
+     _save_meta(root, meta)
+     return True
++
++
++def search_notes(root: str | None, needle: str) -> list[str]:
++    """Case-insensitive substring search across all note bodies.
++
++    Scans every ``.md`` file in the notes home line by line and returns
++    ``RELATIVE_PATH:LINE_NO: TEXT`` strings (1-based line numbers,
++    stripped source lines) ordered by path, then line number.
++    """
++    h = home(root)
++    hits: list[str] = []
++    try:
++        entries = sorted(e for e in os.listdir(h) if e.endswith(".md"))
++    except FileNotFoundError:
++        return hits
++    lowered = needle.lower()
++    for fname in entries:
++        path = os.path.join(h, fname)
++        if not os.path.isfile(path):
++            continue
++        with open(path, encoding="utf-8") as fh:
++            for lineno, line in enumerate(fh, start=1):
++                if lowered in line.lower():
++                    hits.append(f"{fname}:{lineno}: {line.strip()}")
++    return hits

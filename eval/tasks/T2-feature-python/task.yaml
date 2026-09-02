@@ -1,0 +1,8 @@
+id: T2-feature-python
+title: Add full-text search to the notes CLI
+instruction: 'Add a `notes search TEXT` subcommand to the notes CLI. It performs a case-insensitive substring search across every note body (the .md files in the notes home; the "# Title" heading line counts as part of the body), printing one line per match as RELATIVE_PATH:LINE_NO: TEXT where RELATIVE_PATH is the file name relative to the notes home, LINE_NO is the 1-based line number and TEXT is the stripped source line. Results are ordered by path, then line number. With zero matches print nothing and exit 0. Keep the output of all existing commands unchanged.'
+tests: pytest -q
+timeout_s: 900
+solution_patch: solution.patch
+hidden_tests: tests_hidden
+baseline_expectation: fail

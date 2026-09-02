@@ -1,0 +1,55 @@
+:root {
+  color-scheme: light;
+  font-family: system-ui, sans-serif;
+}
+
+body {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  margin: 0;
+  background: #f4f5f7;
+}
+
+.calendar {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .08);
+  padding: 1.25rem 1.5rem;
+  min-width: 320px;
+}
+
+.calendar header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: .75rem;
+}
+
+.calendar h1 {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 2.5rem);
+  gap: 2px;
+  text-align: center;
+}
+
+.cal-weekday {
+  font-size: .72rem;
+  color: #8a8f98;
+  padding-bottom: .35rem;
+}
+
+.cal-day,
+.cal-pad {
+  padding: .45rem 0;
+  border-radius: 6px;
+}
+
+.cal-day:hover {
+  background: #eef1f6;
+}

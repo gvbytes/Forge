@@ -1,0 +1,24 @@
+diff --git a/storage.py b/storage.py
+index 8da23a9..87a89d6 100644
+--- a/storage.py
++++ b/storage.py
+@@ -18,7 +18,6 @@ class TodoStorage:
+             "TODO_DB",
+             os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "todos.json"),
+         )
+-        self._flushed = 0  # number of items already persisted
+ 
+     def load(self) -> list[dict]:
+         """Return the persisted todos (``[]`` when nothing is stored yet)."""
+@@ -30,9 +29,7 @@ class TodoStorage:
+         return data if isinstance(data, list) else []
+ 
+     def save(self, items: list[dict]) -> None:
+-        """Persist the current todo list (incremental flush)."""
++        """Persist the complete current todo list."""
+         os.makedirs(os.path.dirname(os.path.abspath(self.path)), exist_ok=True)
+-        pending = items[self._flushed:]  # only the not-yet-written tail
+         with open(self.path, "w", encoding="utf-8") as fh:
+-            json.dump(pending, fh, indent=2)
+-        self._flushed = len(items)
++            json.dump(items, fh, indent=2)

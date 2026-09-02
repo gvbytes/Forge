@@ -1,0 +1,62 @@
+diff --git a/src/paginate.ts b/src/paginate.ts
+new file mode 100644
+index 0000000..68baf91
+--- /dev/null
++++ b/src/paginate.ts
+@@ -0,0 +1,11 @@
++/**
++ * Shared pagination helper used by every list route.
++ *
++ * Windowing semantics (identical to the previously copy-pasted inline
++ * logic): start = (page - 1) * size, then slice `size` rows off the
++ * backing collection. Defaults: page = 1, size = 20.
++ */
++export function paginate<T>(items: readonly T[], page: number = 1, size: number = 20): T[] {
++  const start = (page - 1) * size;
++  return items.slice(start, start + size);
++}
+diff --git a/src/routes.ts b/src/routes.ts
+index 9919a05..e75c192 100644
+--- a/src/routes.ts
++++ b/src/routes.ts
+@@ -1,9 +1,9 @@
+ // HTTP route handlers for the catalog service.
+ //
+-// NOTE: the pagination block inside the three list handlers below is
+-// copy-pasted between them (it grew organically). Behaviour must remain
+-// byte-for-byte identical if this code is ever consolidated.
++// Pagination goes through the shared helper in ./paginate.js; the wire
++// behaviour of every route is identical to the pre-refactor version.
+ import { CUSTOMERS, ORDERS, PRODUCTS } from "./data.js";
++import { paginate } from "./paginate.js";
+ import type { ListBody, Query, Reply, Row } from "./types.js";
+ 
+ function listBody(items: Row[], page: number, size: number, total: number): ListBody {
+@@ -13,24 +13,21 @@ function listBody(items: Row[], page: number, size: number, total: number): List
+ export function listOrders(q: Query): Reply {
+   const page = q.page ?? 1;
+   const size = q.size ?? 20;
+-  const start = (page - 1) * size;
+-  const items = ORDERS.slice(start, start + size);
++  const items = paginate(ORDERS, page, size);
+   return { status: 200, body: listBody(items, page, size, ORDERS.length) };
+ }
+ 
+ export function listCustomers(q: Query): Reply {
+   const page = q.page ?? 1;
+   const size = q.size ?? 20;
+-  const start = (page - 1) * size;
+-  const items = CUSTOMERS.slice(start, start + size);
++  const items = paginate(CUSTOMERS, page, size);
+   return { status: 200, body: listBody(items, page, size, CUSTOMERS.length) };
+ }
+ 
+ export function listProducts(q: Query): Reply {
+   const page = q.page ?? 1;
+   const size = q.size ?? 20;
+-  const start = (page - 1) * size;
+-  const items = PRODUCTS.slice(start, start + size);
++  const items = paginate(PRODUCTS, page, size);
+   return { status: 200, body: listBody(items, page, size, PRODUCTS.length) };
+ }
+ 

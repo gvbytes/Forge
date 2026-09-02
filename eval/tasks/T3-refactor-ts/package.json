@@ -1,0 +1,14 @@
+{
+  "name": "catalog-service",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "description": "Tiny express-ish catalog service (pure handler functions, no HTTP deps).",
+  "scripts": {
+    "start": "tsx src/server.ts",
+    "test": "tsx test/api.test.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0"
+  }
+}

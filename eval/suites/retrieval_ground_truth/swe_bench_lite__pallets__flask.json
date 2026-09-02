@@ -1,0 +1,52 @@
+{
+ "meta": {
+  "source": "princeton-nlp/SWE-bench_Lite",
+  "source_url": "https://huggingface.co/datasets/princeton-nlp/SWE-bench_Lite",
+  "access": "HF datasets-server /rows JSON API (no auth)",
+  "ground_truth_rule": "gold_files = patch-touched files that exist at base_commit and match indexer-supported extensions; files ADDED by the patch excluded",
+  "license_note": "SWE-bench is MIT-licensed; instances reference public OSS repos under their own licenses",
+  "seed": 42,
+  "count": 3
+ },
+ "instances": [
+  {
+   "instance_id": "pallets__flask-4992",
+   "repo": "pallets/flask",
+   "base_commit": "4c288bc97ea371817199908d0d9b12de9dae327e",
+   "problem_statement": "Add a file mode parameter to flask.Config.from_file()\nPython 3.11 introduced native TOML support with the `tomllib` package. This could work nicely with the `flask.Config.from_file()` method as an easy way to load TOML config files:\r\n\r\n```python\r\napp.config.from_file(\"config.toml\", tomllib.load)\r\n```\r\n\r\nHowever, `tomllib.load()` takes an object readable in binary mode, while `flask.Config.from_file()` opens a file in text mode, resulting in this error:\r\n\r\n```\r\nTypeError: File must be opened in binary mode, e.g. use `open('foo.toml', 'rb')`\r\n```\r\n\r\nWe can get around this with a more verbose expression, like loading from a file opened with the built-in `open()` function and passing the `dict` to `app.Config.from_mapping()`:\r\n\r\n```python\r\n# We have to repeat the path joining that from_file() does\r\nwith open(os.path.join(app.config.root_path, \"config.toml\"), \"rb\") as file:\r\n    app.config.from_mapping(tomllib.load(file))\r\n```\r\n\r\nBut adding a file mode parameter to `flask.Config.from_file()` would enable the use of a simpler expression. E.g.:\r\n\r\n```python\r\napp.config.from_file(\"config.toml\", tomllib.load, mode=\"b\")\r\n```",
+   "changed_files": [
+    "src/flask/config.py"
+   ],
+   "gold_files": [
+    "src/flask/config.py"
+   ],
+   "version": "2.3"
+  },
+  {
+   "instance_id": "pallets__flask-4045",
+   "repo": "pallets/flask",
+   "base_commit": "d8c37f43724cd9fb0870f77877b7c4c7e38a19e0",
+   "problem_statement": "Raise error when blueprint name contains a dot\nThis is required since every dot is now significant since blueprints can be nested. An error was already added for endpoint names in 1.0, but should have been added for this as well.",
+   "changed_files": [
+    "src/flask/blueprints.py"
+   ],
+   "gold_files": [
+    "src/flask/blueprints.py"
+   ],
+   "version": "2.0"
+  },
+  {
+   "instance_id": "pallets__flask-5063",
+   "repo": "pallets/flask",
+   "base_commit": "182ce3dd15dfa3537391c3efaf9c3ff407d134d4",
+   "problem_statement": "Flask routes to return domain/sub-domains information\nCurrently when checking **flask routes** it provides all routes but **it is no way to see which routes are assigned to which subdomain**.\r\n\r\n**Default server name:**\r\nSERVER_NAME: 'test.local'\r\n\r\n**Domains (sub-domains):**\r\ntest.test.local\r\nadmin.test.local\r\ntest.local\r\n\r\n**Adding blueprints:**\r\napp.register_blueprint(admin_blueprint,url_prefix='',subdomain='admin')\r\napp.register_blueprint(test_subdomain_blueprint,url_prefix='',subdomain='test')\r\n\r\n\r\n```\r\n$ flask routes\r\n * Tip: There are .env or .flaskenv files present. Do \"pip install python-dotenv\" to use them.\r\nEndpoint                                                 Methods    Rule\r\n-------------------------------------------------------  ---------  ------------------------------------------------\r\nadmin_blueprint.home                                      GET        /home\r\ntest_subdomain_blueprint.home                             GET        /home\r\nstatic                                                    GET        /static/<path:filename>\r\n...\r\n```\r\n\r\n\r\n**Feature request**\r\nIt will be good to see something like below (that will make more clear which route for which subdomain, because now need to go and check configuration).\r\n**If it is not possible to fix routes**, can you add or tell which method(s) should be used to get below information from flask? \r\n\r\n```\r\n$ flask routes\r\n * Tip: There are .env or .flaskenv files present. Do \"pip install python-dotenv\" to use them.\r\nDomain                Endpoint                                             Methods    Rule\r\n-----------------   ----------------------------------------------------  ----------  ------------------------------------------------\r\nadmin.test.local     admin_blueprint.home                                  GET        /home\r\ntest.test.local      test_subdomain_blueprint.home                         GET        /home\r\ntest.local           static                                                GET        /static/<path:filename>\r\n...\r\n```",
+   "changed_files": [
+    "src/flask/cli.py"
+   ],
+   "gold_files": [
+    "src/flask/cli.py"
+   ],
+   "version": "2.3"
+  }
+ ]
+}

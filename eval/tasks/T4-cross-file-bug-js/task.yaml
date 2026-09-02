@@ -1,0 +1,7 @@
+id: T4-cross-file-bug-js
+title: Fix the calendar month display bug
+instruction: 'The calendar widget renders months with the wrong number of days — e.g. February 2024 shows 31 day cells. The bug is a cross-file one between js/util/date.js and js/calendar.js. Track it down and fix it so every month renders its true day count while keeping all public function names and signatures unchanged (buildCalendar(year, month), daysInMonth(year, month), firstWeekdayOfMonth(year, month) with 0-based months).'
+tests: node test/node-test.js
+timeout_s: 900
+solution_patch: solution.patch
+baseline_expectation: fail

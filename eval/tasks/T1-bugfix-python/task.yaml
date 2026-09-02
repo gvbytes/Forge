@@ -1,0 +1,7 @@
+id: T1-bugfix-python
+title: Fix disappearing todos
+instruction: 'Users report todos vanish after adding a second item. Find and fix the bug.'
+tests: pytest -q
+timeout_s: 900
+solution_patch: solution.patch
+baseline_expectation: fail
