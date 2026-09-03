@@ -21,9 +21,12 @@ DEV="$SCRIPT_DIR/scripts/dev.sh"
 if [ ! -f "$DEV" ]; then
   echo "ERROR: scripts/dev.sh not found at: $DEV" >&2
   echo "       Expected repo layout: <repo>/start.sh + <repo>/scripts/dev.sh." >&2
-  echo "       If this start.sh came from an older copy, re-sync it — it once" >&2
-  echo "       hardcoded an 'agent_ide/' path that never exists on this machine." >&2
   exit 1
+fi
+
+# Free default ports (4100, 4098, 4444) if held by stale processes
+if [ -f "$SCRIPT_DIR/scripts/port-kill.py" ] && command -v python3 >/dev/null 2>&1; then
+  python3 "$SCRIPT_DIR/scripts/port-kill.py" >/dev/null 2>&1 || true
 fi
 
 # Extend PATH with standard binary locations across distros and macOS

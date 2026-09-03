@@ -84,7 +84,9 @@ if [ ! -d "$DIR/node_modules" ] || [ ! -d "$DIR/web/node_modules" ] || [ ! -d "$
 fi
 
 # ── Dynamic ports: prefer documented defaults (engine 4100 / router 4098 / web 4444)
-#    falling back to free ports without external distro dependencies. ──
+if [ -f "$DIR/scripts/port-kill.py" ] && command -v python3 >/dev/null 2>&1; then
+  python3 "$DIR/scripts/port-kill.py" >/dev/null 2>&1 || true
+fi
 get_port() {
   local pref="$1"
   local port=""
