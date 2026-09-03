@@ -25,7 +25,6 @@
 16. [Clean-Slate Linux Setup Guide (From Scratch)](#16-clean-slate-linux-setup-guide-from-scratch)
 17. [Cross-Platform Execution Guide](#17-cross-platform-execution-guide)
 18. [Automated Verification & Test Suites](#18-automated-verification--test-suites)
-19. [10-Minute Presentation Script & Jury Defense Strategy](#19-10-minute-presentation-script--jury-defense-strategy)
 
 ---
 
@@ -77,7 +76,7 @@ Agent IDE isolates client presentation, autonomous orchestration, and intelligen
                                            v
 +---------------------------------------------------------------------------------------+
 |                              UPSTREAM MODEL FLEET (<= 80B)                            |
-|   NVIDIA NIM (Text & Vision) | Groq (Whisper ASR) | Cerebras | Local Ollama (7B/14B)  |
+|          NVIDIA NIM (Text & Vision, 3 keys)  |  Groq (Whisper ASR only)               |
 +---------------------------------------------------------------------------------------+
 ```
 
@@ -122,7 +121,6 @@ flowchart TD
         M_Rev["Muse Glimmer 30B (M) - Reviewer"]
         S_Exp["GPT-OSS 20B (S) - Explorer / Triage"]
         Groq_ASR["Whisper-large-v3 - Voice Input"]
-        Local_Ollama["Local Ollama (7B/14B) - Offline"]
     end
 
     UI -->|POST /api/tasks| Triage
@@ -181,7 +179,7 @@ function model(id: string, tier: Tier, ctxWindow: number, paramB: number, ...): 
 | **Explorer / Triage** | `openai/gpt-oss-20b` | **20B** | 3.6B | MoE | 128,000 | Sub-500ms response (~440ms), 97% tool precision, zero-cost /bytheway side queries and context summaries. |
 | **Multimodal Vision** | `meta/llama-3.2-11b-vision-instruct` | **11B** | 11B | Dense | 128,000 | Dedicated image QA for UI mockups and screenshots directly in chat without mutating workspace files. |
 | **Voice / ASR** | `whisper-large-v3` (via Groq) | **2B** | 2B | Transformer ASR | 448 | Sub-second speech-to-text audio input. |
-| **Local Offline** | `qwen2.5-coder:7b` / `14b` (Ollama) | **7B / 14B** | 7B / 14B | Dense | 32,768 | Offline local fallback running comfortably on 8GB VRAM at $0.00 cost. |
+
 
 ---
 
@@ -206,7 +204,7 @@ $$\frac{\partial / \partial C}{\partial / \partial T} = \frac{w_c / C_{base}}{w_
 $$\mathbf{\$0.01\text{ of spend is mathematically equivalent to } 163.4\text{ seconds of execution time!}}$$
 
 ### Architectural Mitigations:
-1. **The Free-Tier Lock**: Paying for API capability is mathematically irrational under this formula. The Smart Router implements an unbypassable Free-Tier Lock that excludes priced models across all tiers and budget modes, defaulting to free NIM endpoints and local Ollama.
+1. **The Free-Tier Lock**: Paying for API capability is mathematically irrational under this formula. The Smart Router implements an unbypassable Free-Tier Lock that excludes priced models across all tiers and budget modes. Every catalogued model is free.
 2. **Surgical Hunk Diffs**: Dumping entire files consumes thousands of redundant tokens and compounds execution time $T$. Agent IDE generates unified hunk diffs with exact line coordinates, saving up to 90% of prompt tokens.
 3. **Score-Optimal Budget Envelope**: While the competition hard ceiling is $0.50, our governor operates on a strict **$0.05 internal score-optimal envelope**, entering finalize mode long before penalties can degrade the score.
 
@@ -284,7 +282,7 @@ Step Execution
 2. **Cascade Policy**:
    Raises the tier floor by one level on verified step failure, and demotes the tier after two consecutive successes to conserve quota.
 3. **Headroom Ranking & Circuit Breaker**:
-   Tracks 60-second rolling RPM/TPM across providers. If an upstream provider returns HTTP 429 or 5xx, the router trips the circuit breaker and fails over to an alternative provider in under 50ms without losing task state.
+   Tracks 60-second rolling RPM/TPM. NVIDIA NIM is the sole text provider, so recovery runs across KEYS rather than across providers: the route chain is expanded into (candidate x key) attempts, and a 429 or 5xx trips the circuit breaker and moves to the next key without losing task state. Because the three keys belong to three separate accounts, their quotas are genuinely independent. This does not survive a provider-wide outage or a model EOL — no number of keys does.
 4. **Multi-Key Account Pinning per Role**:
    Free tiers meter per account. By allowing developers to store multiple free API keys across separate accounts and pinning them per role (Planner on Account 1, Coder on Account 2, Reviewer on Account 3), rate limits scale from 40 RPM to **120 RPM**.
 5. **Mandatory Settings Screen**:
@@ -488,9 +486,10 @@ NVIDIA_NIM_API_KEY="nvapi-..."
 # Free tier key at: https://console.groq.com/keys
 GROQ_API_KEY="gsk_..."
 
-# Optional Fallbacks
-CEREBRAS_API_KEY="csk-..."
-OPENROUTER_API_KEY="sk-or-v1-..."
+# Additional NVIDIA NIM keys (separate accounts = independent 40 RPM quotas).
+# The router walks these in order when a key is rate-limited or revoked.
+NVIDIA_NIM_API_KEY_2="nvapi-..."
+NVIDIA_NIM_API_KEY_3="nvapi-..."
 EOF
 ```
 
@@ -535,34 +534,6 @@ Currently **750+ automated tests passing** across the repository.
 
 ---
 
-## 19. 10-Minute Presentation Script & Jury Defense Strategy
-
-### Presentation Timing Breakdown
-
-| Time | Speaker | Topic | Key Focus |
-| :--- | :--- | :--- | :--- |
-| **0:00 – 1:30** | Speaker 1 | Problem & Core Architecture | Why sub-80B models break; 4-role model fleet; strict $\le 80\text{B}$ accounting. |
-| **1:30 – 3:30** | Speaker 1 | Orchestration & Verification | Kahn's DAG scheduler, 3 nested loops, and the zero-token AST Auditor (`audit.ts`). |
-| **3:30 – 5:15** | Speaker 2 | Smart Routing & Economics | Complexity tiers (S/M/L), Cascade policy, multi-key pinning ($0.01 \equiv 163\text{s}$). |
-| **5:15 – 7:00** | Speaker 2 | Code Retrieval & Compaction | BM25 + AST graph + PageRank (SWE-bench data); immutable `AGENTS.md` pinning. |
-| **7:00 – 8:30** | Speaker 1 & 2 | HITL Review & Live Demo | Block-level hunk review, `/bytheway`, flame chart, live trace drilldown. |
-| **8:30 – 10:00** | Both | Conclusion & Jury Q&A | Summary of score formula optimization, test suite (750+ tests), and Q&A defense. |
-
-### Anticipated Jury Q&A Defense
-
-1. **"Why use a Directed Acyclic Graph (DAG) instead of standard linear ReAct chains?"**
-   - *Defense*: Linear chains force serial execution where latency compounds. Under the evaluation scoring formula, time is penalized with an exponent of 2.5. By decomposing tasks into a DAG using Kahn's algorithm, independent subtasks execute in parallel, reducing wall-clock time from 274s to 173s (a 37% speedup) while per-file mutex locks (`withFileLock`) prevent write races.
-2. **"Why did you abandon dense vector embeddings for retrieval?"**
-   - *Defense*: Local dense embeddings (`bge-small`) ran at only ~3 chunks/s on CPU, taking 25 minutes to index `pytest`. Furthermore, semantic vectors treat code like English prose and match docstrings rather than execution paths. Our Zero-VRAM hybrid combines BM25 for exact symbol lookups with Tree-sitter AST symbol graphs and Personalized PageRank, delivering an 84% relative lift in MRR on SWE-bench Lite while indexing in under 1 second with 0 GB of VRAM.
-3. **"How do you guarantee models never exceed the 80B parameter limit?"**
-   - *Defense*: The $\le 80\text{B}$ constraint is enforced as a hard startup invariant. In `router/src/providers.ts`, `param_b` measures **TOTAL parameter count**, not active expert count. MoE models advertising 12B active but 120B total are physically rejected at startup.
-4. **"What happens when an upstream provider hits a 429 rate limit mid-task?"**
-   - *Defense*: The router tracks 60-second rolling RPM/TPM headroom and uses Multi-Key Account Pinning to prevent 429s. If a 429 occurs, the circuit breaker trips, imposing an exponential cooldown, and fails over to an alternative provider in under 50ms without losing task history or repeating prior steps.
-5. **"How does project memory in `AGENTS.md` survive context compaction?"**
-   - *Defense*: Project rules and style preferences are read from `AGENTS.md` and wrapped inside immutable keystone delimiters (`<<<PROTECTED>>>`). During Tier 0, 1, and 2 compactions, conversational turns and command logs are compressed, but the protected block is prepended immutably to the fresh context thread.
-
----
-
-## 20. License
+## 19. License
 
 MIT License.

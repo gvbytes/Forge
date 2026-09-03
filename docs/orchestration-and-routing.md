@@ -129,12 +129,12 @@ every signal that moved the decision:
 
 ```
 score 0 -> base S; alias engine/small -> S; free-tier lock: priced models
-excluded; budget:normal ($0.0000/$0.05, 0s/2400s); provider groq chosen:
-headroom 1.00, 429x0, rpm 0/30
+excluded; budget:normal ($0.0000/$0.05, 0s/2400s); provider nvidia-nim chosen:
+headroom 0.97, 429x0, rpm 1/30
 ```
 
 The engine reads that header back and labels the trace with the model that
-**actually answered** — `openai/gpt-oss-20b@groq`, not the alias. The chat badge
+**actually answered** — `openai/gpt-oss-20b@nvidia-nim`, not the alias. The chat badge
 renders it with the reasons on hover.
 
 ### Free-tier lock

@@ -156,10 +156,10 @@ Currently 751 automated tests passing across the repository.
 
 ### 3. Routing: Tiered Dynamic Gateway vs. Static Model Hardwiring
 * **Why not hardcode a single model?**
-  * Small models fail at high-level planning, while 70B models waste token quota and trigger aggressive free-tier rate limits (Groq has 30 RPM on free tier).
+  * Small models fail at high-level planning, while larger models waste token quota and trigger aggressive free-tier rate limits (NVIDIA NIM allows 40 RPM per account).
 * **Our Solution (Tier S / M / L + Live Headroom Routing + 80B Invariant Guard)**:
   * Requests are classified dynamically by token length, file count, and complexity keywords.
-  * Router tracks rolling 60-second RPM and circuit breakers ($429$ cooldowns). If Groq rate limits, it automatically cascades to Cerebras or NIM within 50ms without losing session context.
+  * Router tracks rolling 60-second RPM and circuit breakers ($429$ cooldowns). NVIDIA NIM is the only text provider, so a rate-limited or revoked key fails over to the next of three keys (three separate accounts, hence independent quotas) without losing session context.
   * The hard cap guarantees that models $>80\text{B}$ are physically rejected before touching the network.
 
 ### 4. Memory: Tiered Progressive Compaction vs. Truncation
