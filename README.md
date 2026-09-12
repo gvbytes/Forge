@@ -1,5 +1,7 @@
 # Agent IDE — Autonomous Agentic Coding Workspace
 
+NOTE: Upgrading Forge to orchestrate LLMs with >80B parameters :)
+
 Agent IDE is an autonomous coding environment and model routing gateway designed specifically for small open-weight models (<=80B total parameters), built for the Takneek High-Prep evaluation benchmark.
 
 The system combines a local model router with automatic tier classification and failover, a multi-agent orchestration engine with DAG scheduling and AST-based semantic code retrieval, and a browser-based IDE featuring real-time SSE execution streaming, Monaco diff reviews, and embedded xterm.js PTY terminals.
