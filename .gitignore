@@ -15,6 +15,17 @@ tmp/
 .agentzero/
 __pycache__/
 *.pyc
+*.pyo
+.venv/
+venv/
+env/
+.pytest_cache/
+.coverage
+htmlcov/
+eval/runs/
+eval/eval_scratch*/
 dist-dashboard/
 probe/
 .audit/
+.gemini/
+

@@ -1,5 +1,5 @@
 {
-  "name": "agent-ide",
+  "name": "forge",
   "private": true,
   "workspaces": [
     "router",
@@ -10,7 +10,10 @@
     "dev": "bash scripts/dev.sh",
     "setup": "bun run scripts/setup-keys.ts",
     "preflight": "bun run scripts/preflight-models.ts",
-    "test": "cd router && bun test && cd ../engine && bun test",
-    "typecheck": "cd router && ./node_modules/.bin/tsc --noEmit && cd ../engine && ./node_modules/.bin/tsc --noEmit && cd ../web && ./node_modules/.bin/tsc --noEmit"
+    "test": "cd router && bun test && cd ../engine && bun test && cd ../web && bun test",
+    "typecheck": "cd router && bun run typecheck && cd ../engine && bun run typecheck && cd ../web && bun x tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.2"
   }
 }

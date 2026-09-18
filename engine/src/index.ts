@@ -857,7 +857,7 @@ app.get("/api/tasks/:id/context", (c) => {
   // TaskRecord has budgetUsdCap / maxTokensPerTask. Read budgets from settings with $0.50 ceiling.
   const settingsNow = loadSettings();
   const budgetCapUsd = s.task?.budgetUsdCap ?? (settingsNow as any).budgets?.max_cost_usd ?? settingsNow.budgetPerTaskUsd ?? 0.50;
-  const maxSteps = (settingsNow as { budgets?: { max_steps?: number } }).budgets?.max_steps ?? s.task?.budget?.max_steps ?? 40;
+  const maxSteps = (settingsNow as { budgets?: { max_steps?: number } }).budgets?.max_steps ?? (s.task?.meta as any)?.max_steps ?? 40;
   // Count genuine action steps (agent starts, tool calls, plan steps), not raw micro-spans / telemetry events
   const actionSteps = spans.filter((sp) => sp.kind === "tool.call" || sp.kind === "agent.start" || sp.kind === "step").length;
   const stepsDone = typeof s.task?.stepCount === "number" && s.task.stepCount > 0 ? s.task.stepCount : actionSteps;
