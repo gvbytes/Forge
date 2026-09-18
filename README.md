@@ -1,3 +1,6 @@
+**Note:** Many updates are currently being made, so there may be some issues in this repository. We expect to resolve these within 5-6 days. If you encounter any specific errors, please feel free to start a discussion, and we will address them.
+
+
 # Agent IDE — Autonomous Agentic Coding Workspace
 
 NOTE: Upgrading Forge to orchestrate LLMs with >80B parameters :)
@@ -58,7 +61,7 @@ Agent IDE runs as three independent services communicating over loopback (`127.0
 
 ## Scoring Model Alignment
 
-Agent IDE is calibrated against the Takneek scoring formula:
+Forge is calibrated against the mentioned scoring formula:
 
 $$S = \frac{10 \cdot A}{\left(1 + 0.65\left(\frac{C}{0.15}\right) + 0.35\left(\frac{T}{1320}\right)\right)^{2.5}}$$
 
@@ -99,8 +102,8 @@ $$S = \frac{10 \cdot A}{\left(1 + 0.65\left(\frac{C}{0.15}\right) + 0.35\left(\f
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/gvbytes/agentic-IDE.git
-cd agentic-IDE
+git clone https://github.com/gvbytes/Forge.git
+cd Forge
 ```
 
 2. Start the development environment:
