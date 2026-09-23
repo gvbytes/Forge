@@ -244,6 +244,11 @@ The repository includes complete test suites covering unit logic, router cascade
     └── verify.sh           # 14-gate integration verification script
 ```
 
+
+## How this was built
+
+Forge was built for a hackathon by me (Gaurav Verma) with YashSh42. Most of the implementation was generated with AI coding agents (Google Antigravity); I directed the architecture, tested it and fixed it.
+
 ---
 
 ## License
